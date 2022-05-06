@@ -7,17 +7,21 @@ import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Taskmanager {
+public class TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
 
     public ArrayList getSubtaskFromEpic(Integer id){
+        ArrayList<Subtask> listSubtaskFromEpic = new ArrayList<>();
         Epic epic = epics.get(id);
-        return epic.getSubtaskIds();
+        for (Integer idSubtask : epic.getSubtaskIds()){
+            listSubtaskFromEpic.add(subtasks.get(idSubtask));
+        }
+        return listSubtaskFromEpic;
     }
 
-    public void addTask(Task task){
+    public void addTask(Task task) {
         tasks.put(task.getTaskId(), task);
     }
 
@@ -28,6 +32,7 @@ public class Taskmanager {
     public void addSubtask(Subtask subtask){
         subtasks.put(subtask.getTaskId(), subtask);
         epics.get(subtask.getEpicId()).getSubtaskIds().add(subtask.getTaskId());
+        updateEpicStatus(subtask.getEpicId());
     }
 
     public ArrayList getTasks(){
@@ -48,6 +53,9 @@ public class Taskmanager {
 
     public void deleteAllTheTasksInListSubtask(){
         subtasks.clear();
+        for (Integer idEpic : epics.keySet()){
+            epics.get(idEpic).setStatus("New");
+        }
     }
 
     public void deleteAllTheTasksInListEpic(){

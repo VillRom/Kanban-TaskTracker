@@ -1,4 +1,4 @@
-import manager.Taskmanager;
+import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
@@ -6,7 +6,7 @@ import model.Task;
 public class Main {
 
     public static void main(String[] args) {
-        Taskmanager taskmanager = new Taskmanager();
+        TaskManager taskmanager = new TaskManager();
         taskmanager.addEpic(new Epic("Уборка", "уборка в доме", "New", 4));
         taskmanager.addSubtask(new Subtask("Вытерить пыль", "на полках шкафа", "New", 1
                 , 4));
@@ -33,6 +33,6 @@ public class Main {
         taskmanager.deleteValueEpicById(4);
         System.out.println("Удаление в эпике подзадачи №4 --" + taskmanager.getSubtasks());
         System.out.println("Удаление задачи №3 --" + taskmanager.getTasks());
-        System.out.println("Удвление эпика №4 --" + taskmanager.getEpics());
+        System.out.println("Удаление эпика №4 --" + taskmanager.getEpics());
     }
 }
