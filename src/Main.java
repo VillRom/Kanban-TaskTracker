@@ -1,3 +1,4 @@
+import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import model.Epic;
 import model.Subtask;
@@ -6,7 +7,7 @@ import model.Task;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskmanager = new TaskManager();
+        TaskManager taskmanager = new InMemoryTaskManager();
         taskmanager.addEpic(new Epic("Уборка", "уборка в доме", "New", 4));
         taskmanager.addSubtask(new Subtask("Вытерить пыль", "на полках шкафа", "New", 1
                 , 4));
@@ -26,13 +27,18 @@ public class Main {
                 , "In progress", 3));
         taskmanager.updateSubtask(1, new Subtask("Вытерить пыль", "на полках шкафа", "Done"
                 , 1, 4));
+        taskmanager.getValueById(1);
+        taskmanager.getValueById(2);
+        taskmanager.getValueById(3);
+        taskmanager.getValueById(2);
+        System.out.println("Список просмотров " + taskmanager.getHistory());
         System.out.println("Новый статус подзадачи №1 --" + taskmanager.getSubtasks());
         System.out.println("Новый статус задачи №3 --" + taskmanager.getTasks());
         System.out.println("Новый статус эпика №4 --" + taskmanager.getEpics());
-        taskmanager.deleteValueTaskById(3);
+        /*taskmanager.deleteValueTaskById(3);
         taskmanager.deleteValueEpicById(4);
         System.out.println("Удаление в эпике подзадачи №4 --" + taskmanager.getSubtasks());
         System.out.println("Удаление задачи №3 --" + taskmanager.getTasks());
-        System.out.println("Удаление эпика №4 --" + taskmanager.getEpics());
+        System.out.println("Удаление эпика №4 --" + taskmanager.getEpics());*/
     }
 }
