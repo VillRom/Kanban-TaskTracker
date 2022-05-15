@@ -3,7 +3,7 @@ package model;
 public class Task {
     private String name;
     private String description;
-    private String status;
+    private StatusTasks status;
     private int taskId;
 
     @Override
@@ -16,7 +16,7 @@ public class Task {
                 '}';
     }
 
-    public Task(String name, String description, String status, int taskId){
+    public Task(String name, String description, StatusTasks status, int taskId){
         this.name = name;
         this.description = description;
         this.status = status;
@@ -39,11 +39,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public StatusTasks getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusTasks status) {
         this.status = status;
     }
 

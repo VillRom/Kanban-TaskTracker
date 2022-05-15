@@ -1,10 +1,10 @@
 package manager;
 
 import model.Epic;
+import model.StatusTasks;
 import model.Subtask;
 import model.Task;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
-    private List<Task> memoryTask = new ArrayList<>();
+    HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public ArrayList getSubtaskFromEpic(Integer id){
@@ -66,7 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllTheTasksInListSubtask(){
         subtasks.clear();
         for (Integer idEpic : epics.keySet()){
-            epics.get(idEpic).setStatus("New");
+            epics.get(idEpic).setStatus(StatusTasks.NEW);
         }
     }
 
@@ -81,13 +81,13 @@ public class InMemoryTaskManager implements TaskManager {
         Task value;
         if (tasks.get(id) == null && epics.get(id) == null){
             value = subtasks.get(id);
-            checkingFullListOfTasksInMemory(value);
+            historyManager.add(value);
         }else if(tasks.get(id) == null){
             value = epics.get(id);
-            checkingFullListOfTasksInMemory(value);
+            historyManager.add(value);
         }else{
             value = tasks.get(id);
-            checkingFullListOfTasksInMemory(value);
+            historyManager.add(value);
         }
         return value;
     }
@@ -133,36 +133,27 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(epicId);
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
+
     private void updateEpicStatus(Integer idEpic) {
         int amountSubtaskNew = 0;
         int amountSubtaskDone = 0;
         for (Integer cheak : epics.get(idEpic).getSubtaskIds()){
-            if (subtasks.get(cheak).getStatus() == "New"){
+            if (subtasks.get(cheak).getStatus() == StatusTasks.NEW){
                 amountSubtaskNew++;
-            }else if (subtasks.get(cheak).getStatus() == "Done"){
+            }else if (subtasks.get(cheak).getStatus() == StatusTasks.DONE){
                 amountSubtaskDone++;
             }
         }
         if (epics.get(idEpic).getSubtaskIds().size() == amountSubtaskNew){
-            epics.get(idEpic).setStatus("New");
+            epics.get(idEpic).setStatus(StatusTasks.NEW);
         }else if (epics.get(idEpic).getSubtaskIds().size() == amountSubtaskDone){
-            epics.get(idEpic).setStatus("Done");
+            epics.get(idEpic).setStatus(StatusTasks.DONE);
         }else{
-            epics.get(idEpic).setStatus("In progress");
+            epics.get(idEpic).setStatus(StatusTasks.IN_PROGRESS);
         }
-    }
-
-    private void checkingFullListOfTasksInMemory(Task value) {
-        if (memoryTask.size() >= 10) {
-            memoryTask.remove(0);
-            memoryTask.add(value);
-        }else {
-            memoryTask.add(value);
-        }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return memoryTask;
     }
 }
