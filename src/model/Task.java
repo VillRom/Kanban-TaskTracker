@@ -16,7 +16,7 @@ public class Task {
                 '}';
     }
 
-    public Task(String name, String description, StatusTasks status, int taskId){
+    public Task(String name, String description, StatusTasks status, int taskId) {
         this.name = name;
         this.description = description;
         this.status = status;
