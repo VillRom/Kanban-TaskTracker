@@ -6,12 +6,8 @@ import model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 public interface TaskManager {
-    HashMap<Integer, Task> tasks = new HashMap<>();
-    HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    HashMap<Integer, Epic> epics = new HashMap<>();
 
     public ArrayList getSubtaskFromEpic(Integer id);
 
