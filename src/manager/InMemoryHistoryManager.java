@@ -9,15 +9,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (customViewedTasks.size >= 10) {
-            customViewedTasks.removeNode(customViewedTasks.getHead());
-        }
         if (viewedTask.containsKey(task.getTaskId())) {
             customViewedTasks.removeNode(viewedTask.get(task.getTaskId()));
             customViewedTasks.linkLast(task);
-        }else {
+        } else {
             customViewedTasks.linkLast(task);
-            viewedTask.put(task.getTaskId(), customViewedTasks.getTail());
+            viewedTask.put(task.getTaskId(), customViewedTasks.tail);
         }
     }
 
@@ -40,14 +37,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         private int size = 0;
 
         private void linkLast(Task task) {
-            if(size == 0){
-                tail = new Node<>(task);
-                size++;
-            }else if(size == 1){
+            if(tail == null){
+                tail = new Node<>(task, null, null);
                 head = tail;
-                tail = new Node<>(task);
-                head.next = tail;
-                tail.prev = head;
                 size++;
             }else if(viewedTask.containsKey(task.getTaskId())){
                 Node<Task> exTail = tail;
@@ -56,12 +48,10 @@ public class InMemoryHistoryManager implements HistoryManager {
                 tail.prev = exTail;
                 tail.next = null;
                 size++;
-            }else{
+            } else{
                 Node<Task> exTail = tail;
-                tail = new Node<>(task);
+                tail = new Node<>(task, exTail, null);
                 exTail.next = tail;
-                tail.prev = exTail;
-                tail.next = null;
                 size++;
             }
         }
@@ -86,23 +76,11 @@ public class InMemoryHistoryManager implements HistoryManager {
             }else if(node == customViewedTasks.tail){
                 node.prev.next = node.next;
                 size = size -1;
-            }else {
+            } else {
                 node.next.prev = node.prev;
                 node.prev.next = node.next;
                 size = size -1;
             }
-        }
-
-        public void setTail(Node<Task> tail) {
-            this.tail = tail;
-        }
-
-        public Node<Task> getHead() {
-            return head;
-        }
-
-        public Node<Task> getTail() {
-            return tail;
         }
     }
 }
