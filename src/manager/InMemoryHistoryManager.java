@@ -42,16 +42,14 @@ public class InMemoryHistoryManager implements HistoryManager {
                 head = tail;
                 size++;
             }else if(viewedTask.containsKey(task.getTaskId())){
-                Node<Task> exTail = tail;
+                tail.next = viewedTask.get(task.getTaskId());
+                viewedTask.get(task.getTaskId()).prev = tail;
                 tail = viewedTask.get(task.getTaskId());
-                exTail.next = tail;
-                tail.prev = exTail;
                 tail.next = null;
                 size++;
             } else{
-                Node<Task> exTail = tail;
-                tail = new Node<>(task, exTail, null);
-                exTail.next = tail;
+                tail.next = new Node<>(task, tail, null);
+                tail = tail.next;
                 size++;
             }
         }
