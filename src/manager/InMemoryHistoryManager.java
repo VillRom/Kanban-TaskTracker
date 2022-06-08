@@ -34,24 +34,20 @@ public class InMemoryHistoryManager implements HistoryManager {
     public class CustomLinkedList<T> {
         private Node<Task> head;
         private Node<Task> tail;
-        private int size = 0;
 
         private void linkLast(Task task) {
-            if(tail == null){
-                tail = new Node<>(task, null, null);
-                head = tail;
-                size++;
+            Node node = new Node<>(task, tail, null);
+            if(head == null){
+                head = node;
             }else if(viewedTask.containsKey(task.getTaskId())){
-                tail.next = viewedTask.get(task.getTaskId());
-                viewedTask.get(task.getTaskId()).prev = tail;
-                tail = viewedTask.get(task.getTaskId());
-                tail.next = null;
-                size++;
+                node = viewedTask.get(task.getTaskId());
+                node.prev = tail;
+                node.next = null;
+                tail.next = node;
             } else{
-                tail.next = new Node<>(task, tail, null);
-                tail = tail.next;
-                size++;
+                tail.next = node;
             }
+            tail = node;
         }
 
         private ArrayList<Task> getTasks() {
@@ -65,19 +61,13 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         private void removeNode(Node node){
-            if(node == customViewedTasks.head && size == 1) {
-                customViewedTasks.head = null;
-                size = size -1;
-            }else if(node == customViewedTasks.head && size > 1){
+            if(node == customViewedTasks.head) {
                 customViewedTasks.head = node.next;
-                size = size -1;
             }else if(node == customViewedTasks.tail){
                 node.prev.next = node.next;
-                size = size -1;
             } else {
                 node.next.prev = node.prev;
                 node.prev.next = node.next;
-                size = size -1;
             }
         }
     }
