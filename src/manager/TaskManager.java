@@ -3,7 +3,7 @@ package manager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,5 +43,9 @@ public interface TaskManager {
 
     public void deleteValueSubtaskById(Integer id);
 
+    public String toString(Task task);
+
     public List<Task> getHistory();
+
+    void save() throws IOException;
 }
