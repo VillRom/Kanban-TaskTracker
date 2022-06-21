@@ -8,7 +8,6 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static File autoSave;
-    HistoryManager manager = getHistoryManager();
 
     public FileBackedTasksManager(File autoSave) {
         this.autoSave = autoSave;
@@ -34,7 +33,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         bufferedWriter.newLine();
                     }
                     bufferedWriter.newLine();
-                    bufferedWriter.write(toString(manager));
+                    bufferedWriter.write(toString(historyManager));
                 } catch (IOException e) {
                     System.out.println("Произошла ошибка записи в файл");
                 }
@@ -44,7 +43,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (ManagerSaveException e) {
             System.out.println("Произошла ошибка записи в файл. Ошибка: " + e.getMessages());
         } catch (IOException e) {
-            System.out.println("Произошла ошибка записи в файл");
+            throw new ManagerSaveException("Произошла ошибка записи в файл.");
         }
     }
 
@@ -75,13 +74,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void deleteAllTheTasksInListSubtask() {
         super.deleteAllTheTasksInListSubtask();
-
+        save();
     }
 
     @Override
     public void deleteAllTheTasksInListEpic() {
         super.deleteAllTheTasksInListEpic();
-
+        save();
     }
 
     @Override
@@ -121,11 +120,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private static String toString(HistoryManager manager) {
-        String[] idTasksInMemory = new String[manager.getHistory().size()];
-        for (int i = 0; i < idTasksInMemory.length; i++) {
-            idTasksInMemory[i] = String.valueOf(manager.getHistory().get(i).getTaskId());
+        List<String> idTaskHistory = new ArrayList<>();
+        for (int i = 0; i < manager.getHistory().size(); i++) {
+            idTaskHistory.add(String.valueOf((manager.getHistory().get(i).getTaskId())));
         }
-        return String.join(",", idTasksInMemory);
+        return String.join(",", idTaskHistory);
     }
 
     private static List<Integer> fromString(String value) {
