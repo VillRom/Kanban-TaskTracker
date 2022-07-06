@@ -62,9 +62,22 @@ public class InMemoryHistoryManager implements HistoryManager {
             head = node.next;
         } else if(node == tail) {
             node.prev.next = node.next;
+            tail = node.prev;
         } else {
             node.next.prev = node.prev;
             node.prev.next = node.next;
         }
+    }
+
+    public Node<Task> getHead() {
+        return head;
+    }
+
+    public Node<Task> getTail() {
+        return tail;
+    }
+
+    public Map<Integer, Node> getViewedTask() {
+        return viewedTask;
     }
 }

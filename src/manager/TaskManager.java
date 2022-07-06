@@ -4,10 +4,16 @@ import model.Epic;
 import model.Subtask;
 import model.Task;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public interface TaskManager {
+
+    public LinkedList<Task> getPrioritizedTasks();
+
+    public void intersectionsOfTime(LinkedList<Task> task);
 
     public ArrayList getSubtaskFromEpic(Integer id);
 
@@ -48,4 +54,10 @@ public interface TaskManager {
     public List<Task> getHistory();
 
     void save() throws IOException;
+
+    public void calculationDurationEpic(Epic epic);
+
+    public void startDateTimeEpic(Epic epic);
+
+    public LocalDateTime getEndTime(Task task);
 }

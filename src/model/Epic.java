@@ -13,11 +13,12 @@ public class Epic extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", status='" + getStatus() + '\'' +
                 ", taskId=" + getTaskId() +
+                ", duration=" + getDuration() +
                 '}';
     }
 
-    public Epic(String name,TypeTask type, String description, StatusTasks status, int taskId) {
-        super(name, type, description, status, taskId);
+    public Epic(String name,TypeTask type, String description, StatusTasks status, int taskId, long duration) {
+        super(name, type, description, status, taskId, duration);
     }
 
     @Override

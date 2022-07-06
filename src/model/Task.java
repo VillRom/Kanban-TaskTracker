@@ -1,11 +1,15 @@
 package model;
 
+import java.time.LocalDateTime;
+
 public class Task {
     private String name;
     private String description;
     private StatusTasks status;
     private int taskId;
     private TypeTask type;
+    private long duration;
+    private LocalDateTime startTime;
 
     @Override
     public String toString() {
@@ -15,15 +19,17 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 ", taskId=" + taskId +
+                ", duration=" + duration +
                 '}';
     }
 
-    public Task(String name,TypeTask type, String description, StatusTasks status, int taskId) {
+    public Task(String name,TypeTask type, String description, StatusTasks status, int taskId, long duration) {
         this.name = name;
         this.type = type;
         this.description = description;
         this.status = status;
         this.taskId = taskId;
+        this.duration = duration;
     }
 
     public String getName() {
@@ -64,5 +70,21 @@ public class Task {
 
     public void setType(TypeTask type) {
         this.type = type;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 }
