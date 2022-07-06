@@ -3,6 +3,7 @@ package manager;
 import model.*;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws IOException {
         super.addTask(task);
         save();
     }
@@ -97,7 +98,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public void addSubtask(Subtask subtask) throws IOException {
         super.addSubtask(subtask);
         save();
     }
@@ -122,7 +123,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Task getValueById(Integer id) {
-        return super.getValueById(id);
+        super.getValueById(id);
+        save();
+        return null;
     }
 
     @Override
@@ -131,8 +134,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    @Override
-    public String toString(Task task) {
+
+    private static String toString(Task task) {
         if (task.getType() == TypeTask.SUBTASK) {
             return task.getTaskId() + "," + task.getType() + "," + task.getName() + ","
                     + task.getStatus() + "," + task.getDescription() + "," + task.getDuration() + "," +
@@ -211,3 +214,4 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return managerSave;
     }
 }
+

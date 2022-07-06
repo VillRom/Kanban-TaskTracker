@@ -1,5 +1,7 @@
-package manager;
+package test;
 
+import manager.HistoryManager;
+import manager.Managers;
 import model.StatusTasks;
 import model.Task;
 import model.TypeTask;
