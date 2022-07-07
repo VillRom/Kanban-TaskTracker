@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 public class HistoryManagerTest {
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Test
     public void addTestWithEmptyHistory() {

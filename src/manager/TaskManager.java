@@ -46,6 +46,4 @@ public interface TaskManager {
     public void deleteValueSubtaskById(Integer id);
 
     public List<Task> getHistory();
-
-    public void updateEpicEndTime(Integer idEpic);
 }

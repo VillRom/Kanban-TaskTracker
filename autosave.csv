@@ -1,5 +1,6 @@
 id,type,name,status,description,duration,epic
-3,EPIC,Сварить россольник,NEW,по рецепту бабушки,15
-4,SUBTASK,Сварить бульон,NEW,Варить 40 минут,15,3
+1,TASK,Проверка Task,NEW,Task для проверки,10
+2,EPIC,Проверка Epic,IN_PROGRESS,Epic для проверки,15
+3,SUBTASK,Проверка Subtask,IN_PROGRESS,Subtask для проверки,15,2
 
-3,4
+1,3
