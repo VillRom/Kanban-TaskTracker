@@ -132,15 +132,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getValueById(Integer id) {
         Task value;
-        if (tasks.get(id) == null && epics.get(id) == null) {
+        if (tasks.get(id) == null && epics.get(id) == null && subtasks.get(id) != null) {
             value = subtasks.get(id);
             historyManager.add(value);
-        } else if (tasks.get(id) == null) {
+        } else if (tasks.get(id) == null && epics.get(id) != null) {
             value = epics.get(id);
             historyManager.add(value);
-        } else {
+        } else if (tasks.get(id) != null){
             value = tasks.get(id);
             historyManager.add(value);
+        } else {
+            value = null;
         }
         return value;
     }
@@ -245,10 +247,14 @@ public class InMemoryTaskManager implements TaskManager {
     private void calculatingTheEpicExecutionTime(Integer idEpic) {
         if (!epics.get(idEpic).getSubtaskIds().isEmpty()) {
             LocalDateTime startEpicTime = subtasks.get(epics.get(idEpic).getSubtaskIds().get(0)).getStartTime();
+            LocalDateTime endEpicTime = subtasks.get(epics.get(idEpic).getSubtaskIds().get(0)).getEndTime();
             long durationEpic = 0;
             for (Integer check : epics.get(idEpic).getSubtaskIds()) {
                 if (subtasks.get(check).getStartTime().isBefore(startEpicTime)) {
                     startEpicTime = subtasks.get(check).getStartTime();
+                }
+                if (subtasks.get(check).getEndTime().isAfter(endEpicTime)) {
+                    endEpicTime = subtasks.get(check).getEndTime();
                 }
                 durationEpic += subtasks.get(check).getDuration();
             }
