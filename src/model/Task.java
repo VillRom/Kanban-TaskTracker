@@ -20,6 +20,7 @@ public class Task {
                 ", status='" + status + '\'' +
                 ", taskId=" + taskId +
                 ", duration=" + duration +
+                ", startTime=" + startTime +
                 '}';
     }
 

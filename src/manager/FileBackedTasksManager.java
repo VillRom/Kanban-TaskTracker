@@ -13,7 +13,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.autoSave = autoSave;
     }
 
-    private void save() {
+    public FileBackedTasksManager() {
+    }
+
+    protected void save() {
         try {
             if (autoSave.exists()) {
                 try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(autoSave))) {
@@ -211,6 +214,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             System.out.println("Произошла ошибка чтения файла");
         }
         return managerSave;
+    }
+
+    public HTTPTaskManager loadFromFile() {
+        return null;
     }
 }
 

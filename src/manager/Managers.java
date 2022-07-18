@@ -5,7 +5,7 @@ import java.io.File;
 public class Managers {
 
     public static TaskManager getDefault() {
-        return new HTTPTaskManager(new File("autosave.csv"), "http://localhost:8078/");
+        return new HTTPTaskManager("http://localhost:8078/");
     }
 
     public static HistoryManager getDefaultHistory() {

@@ -16,6 +16,7 @@ public class Epic extends Task {
                 ", status='" + getStatus() + '\'' +
                 ", taskId=" + getTaskId() +
                 ", duration=" + getDuration() +
+                ", startTime=" + getStartTime() +
                 '}';
     }
 
