@@ -49,7 +49,7 @@ public class KVTaskClient {
         String returnManager = new String();
         request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(new String(url + "load/" + key + "?API_TOKEN=" + API_TOKEN)))
+                .uri(URI.create(url + "load/" + key + "?API_TOKEN=" + API_TOKEN))
                 .build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

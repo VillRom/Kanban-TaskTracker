@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
-    private Map<LocalDateTime, Task> sortTaskTime = new TreeMap<>(new Comparator<LocalDateTime>() {
+    protected HashMap<Integer, Task> tasks = new HashMap<>();
+    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected HashMap<Integer, Epic> epics = new HashMap<>();
+    protected Map<LocalDateTime, Task> sortTaskTime = new TreeMap<>(new Comparator<LocalDateTime>() {
         @Override
         public int compare(LocalDateTime o1, LocalDateTime o2) {
             if (o1 == null){

@@ -3,17 +3,15 @@ package manager;
 import client.KVTaskClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import model.*;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
     private String url;
     private KVTaskClient kvTaskClient;
-    private String key = "menegerStatus";
     private Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
@@ -21,92 +19,63 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     public HTTPTaskManager(String url) {
         this.url = url;
         this.kvTaskClient = new KVTaskClient(url);
+        load();
     }
 
     @Override
     protected void save() {
-        String jsonMenegerStatus = new String();
-        List<String> statusMeneger = new ArrayList<>();
-        if (!getTasks().isEmpty()) {
-            for (Object task : getTasks()) {
-                statusMeneger.add(gson.toJson(task));
-            }
+        if (!tasks.isEmpty()) {
+            String jsonTasks = gson.toJson(new ArrayList<>(tasks.values()));
+            kvTaskClient.put("tasks", jsonTasks);
         }
-        if(!getEpics().isEmpty()) {
-            for (Object epic : getEpics()) {
-                statusMeneger.add(gson.toJson(epic));
-            }
+        if(!epics.isEmpty()) {
+            String jsonEpics = gson.toJson(new ArrayList<>(epics.values()));
+            kvTaskClient.put("epics", jsonEpics);
         }
-        if(!getSubtasks().isEmpty()) {
-            for (Object subtask : getSubtasks()) {
-                statusMeneger.add(gson.toJson(subtask));
-            }
+        if(!subtasks.isEmpty()) {
+            String jsonSubtasks = gson.toJson(new ArrayList<>(subtasks.values()));
+            kvTaskClient.put("subtasks", jsonSubtasks);
         }
-        if (!historyManager.getHistory().isEmpty()) {
-            for(Task task : historyManager.getHistory()) {
-                statusMeneger.add(gson.toJson(task.getTaskId()));
-            }
+        if (getHistory().size() != 0) {
+            String jsonHistory = gson.toJson(new ArrayList<>(getHistory()));
+            kvTaskClient.put("history", jsonHistory);
         }
-        for (String str : statusMeneger) {
-            jsonMenegerStatus += str;
-        }
-        kvTaskClient.put(key, jsonMenegerStatus);
     }
 
-    @Override
-    public HTTPTaskManager loadFromFile() {
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager("http://localhost:8078/");
-        String statusNewMeneger = kvTaskClient.load(key);
-        boolean isStringEndsWithParenthesis = statusNewMeneger.endsWith("}");
-        List<String> listStatus = List.of(statusNewMeneger.split("}"));
-        String afds = listStatus.get(0) + "}";
-        Task task = gson.fromJson(afds, Task.class);
-        for (String str : listStatus) {
-            if (str.contains("TASK")) {
-                try {
-                    str = str + "}";
-                    httpTaskManager.addTask(gson.fromJson(str, Task.class));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if (str.contains("EPIC")) {
-                str = str + "}";
-                httpTaskManager.addEpic(gson.fromJson(str, Epic.class));
-            } else if (str.contains("SUBTASK")) {
-                try {
-                    str = str + "}";
-                    httpTaskManager.addSubtask(gson.fromJson(str, Subtask.class));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if (!isStringEndsWithParenthesis) {
-                for (int i = 0; i < str.length(); i++) {
-                    httpTaskManager.getValueById(Integer.parseInt(String.valueOf(str.charAt(i))));
-                }
-            }
-        }
-        return httpTaskManager;
+    public void load() {
+        ArrayList<Task> tasks = gson.fromJson(kvTaskClient.load("tasks"), new TypeToken<ArrayList<Task>>() {
+        }.getType());
+        addTasks(tasks);
+        ArrayList<Task> epics = gson.fromJson(kvTaskClient.load("epics"), new TypeToken<ArrayList<Task>>() {
+        }.getType());
+        addTasks(epics);
+        ArrayList<Task> subtasks = gson.fromJson(kvTaskClient.load("subtasks"), new TypeToken<ArrayList<Task>>() {
+        }.getType());
+        addTasks(subtasks);
+        ArrayList<Task> history = gson.fromJson(kvTaskClient.load("history"), new TypeToken<ArrayList<Task>>() {
+        }.getType());
+        addTasks(history);
     }
 
-    /*public static void main(String[] args) {
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager("http://localhost:8078/");
-        Task task = new Task("Проверка Task", TypeTask.TASK,
-                "Task для проверки", StatusTasks.NEW, 1, 10);
-        Task task1 = new Task("Проверка Task1", TypeTask.TASK,
-                "Task для проверки", StatusTasks.NEW, 2, 10);
-        Task task2 = new Task("Проверка Task2", TypeTask.TASK,
-                "Task для проверки", StatusTasks.NEW, 3, 10);
-        task.setStartTime((LocalDateTime.now()));
-        task1.setStartTime((LocalDateTime.now()).plusMinutes(60));
-        task2.setStartTime((LocalDateTime.now()).plusMinutes(120));
-        try {
-            httpTaskManager.addTask(task);
-            httpTaskManager.addTask(task1);
-            httpTaskManager.addTask(task2);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void addTasks(ArrayList<Task> listTasks) {
+        if (listTasks.stream().allMatch(task -> task.getType().equals(TypeTask.TASK)) & tasks.isEmpty()) {
+            for (Task task : listTasks) {
+                tasks.put(task.getTaskId(), task);
+                sortTaskTime.put(task.getStartTime(), task);
+            }
+        } else if (listTasks.stream().allMatch(task -> task.getType().equals(TypeTask.EPIC)) & epics.isEmpty()) {
+            for (Task epic : listTasks) {
+                epics.put(epic.getTaskId(), (Epic) epic);
+            }
+        } else if (listTasks.stream().allMatch(task -> task.getType().equals(TypeTask.SUBTASK)) & subtasks.isEmpty()) {
+            for (Task subtask : listTasks) {
+                subtasks.put(subtask.getTaskId(), (Subtask) subtask);
+                sortTaskTime.put(subtask.getStartTime(), subtask);
+            }
+        } else {
+            for (Task tasks : listTasks) {
+                historyManager.add(tasks);
+            }
         }
-        HTTPTaskManager httpTaskManager222 = httpTaskManager.loadFromFile();
-        System.out.println(123);
-    }*/
+    }
 }

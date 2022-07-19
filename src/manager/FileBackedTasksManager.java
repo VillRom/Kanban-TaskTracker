@@ -215,9 +215,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return managerSave;
     }
-
-    public HTTPTaskManager loadFromFile() {
-        return null;
-    }
 }
 
