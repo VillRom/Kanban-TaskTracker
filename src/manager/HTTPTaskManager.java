@@ -18,7 +18,6 @@ public class HTTPTaskManager extends FileBackedTasksManager {
 
     public HTTPTaskManager(String url) {
         this.kvTaskClient = new KVTaskClient(url);
-        load();
     }
 
     @Override
