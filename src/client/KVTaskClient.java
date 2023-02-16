@@ -7,7 +7,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-    private String url;
+    private final String url;
     private String API_TOKEN;
     private HttpRequest request;
     HttpClient client = HttpClient.newHttpClient();
@@ -15,7 +15,7 @@ public class KVTaskClient {
 
     public KVTaskClient(String url) {
         this.url = url;
-        request = HttpRequest.newBuilder().uri(URI.create(new String(url + "register"))).GET().build();
+        request = HttpRequest.newBuilder().uri(URI.create(url + "register")).GET().build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
@@ -46,7 +46,7 @@ public class KVTaskClient {
         }
     }
     public String load(String key) {
-        String returnManager = new String();
+        String returnManager = "";
         request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(url + "load/" + key + "?API_TOKEN=" + API_TOKEN))

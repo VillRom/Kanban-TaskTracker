@@ -4,7 +4,6 @@ import manager.TaskManager;
 import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -65,12 +64,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(2, taskManager.getTasks().size(), "размер списка не совпал");
         Assertions.assertEquals(3, taskManager.getPrioritizedTasks().size(),
                 "размер отсортированного списка не совпадает");
-        final IOException exception = Assertions.assertThrows(IOException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                task.setStartTime(((Task)taskManager.getSubtasks().get(0)).getStartTime().plusMinutes(1));
-                taskManager.addTask(task);
-            }
+        final IOException exception = Assertions.assertThrows(IOException.class, () -> {
+            task.setStartTime(taskManager.getSubtasks().get(0).getStartTime().plusMinutes(1));
+            taskManager.addTask(task);
         });
         Assertions.assertEquals("Пересечение по времени выполнения c задачей - Проверка Subtask",
                 exception.getMessage(), "сообщение об исключении не совпало");
@@ -96,7 +92,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(3, taskManager.getPrioritizedTasks().size(),
                 "размер сортированного списка не совпадает");
         Assertions.assertEquals(subtask, taskManager.getSubtasks().get(1), "задача не совпала");
-        Assertions.assertEquals(StatusTasks.IN_PROGRESS, ((Epic)taskManager.getEpics().get(0)).getStatus(),
+        Assertions.assertEquals(StatusTasks.IN_PROGRESS, taskManager.getEpics().get(0).getStatus(),
                 "статус эпика не совпал");
     }
 
@@ -241,7 +237,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Assertions.assertEquals(history, taskManager.getHistory(),
                 "просмотр задач не изменился");
         Assertions.assertTrue(taskManager.getSubtasks().isEmpty(), "подзадача не удалилась");
-        Assertions.assertEquals(StatusTasks.NEW, ((Epic)taskManager.getEpics().get(0)).getStatus(),
+        Assertions.assertEquals(StatusTasks.NEW, taskManager.getEpics().get(0).getStatus(),
                 "статус эпика изменился");
         Assertions.assertTrue(((Epic) taskManager.getEpics().get(0)).getSubtaskIds().isEmpty(),
                 "список id сабтасков в эпике не пустой");

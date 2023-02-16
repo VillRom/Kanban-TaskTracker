@@ -10,14 +10,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
-    private String url;
-    private KVTaskClient kvTaskClient;
-    private Gson gson = new GsonBuilder()
+
+    private final KVTaskClient kvTaskClient;
+    private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
 
     public HTTPTaskManager(String url) {
-        this.url = url;
         this.kvTaskClient = new KVTaskClient(url);
         load();
     }

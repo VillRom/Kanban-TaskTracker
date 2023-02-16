@@ -10,18 +10,13 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> tasks = new HashMap<>();
     protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected HashMap<Integer, Epic> epics = new HashMap<>();
-    protected Map<LocalDateTime, Task> sortTaskTime = new TreeMap<>(new Comparator<LocalDateTime>() {
-        @Override
-        public int compare(LocalDateTime o1, LocalDateTime o2) {
-            if (o1 == null){
-                return 1;
-            }else if(o2 == null){
-                return -1;
-            }else if(o1 == null & o2 == null){
-                return 0;
-            }else {
-                return o1.compareTo(o2);
-            }
+    protected Map<LocalDateTime, Task> sortTaskTime = new TreeMap<>((o1, o2) -> {
+        if (o1 == null){
+            return 1;
+        }else if(o2 == null){
+            return -1;
+        }else {
+            return o1.compareTo(o2);
         }
     });
 
@@ -33,21 +28,23 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void intersectionsOfTime(Task task) throws IOException {
-        for (Task value : sortTaskTime.values()) {
-            if (task.getStartTime().isBefore(value.getEndTime()) & task.getStartTime().isAfter(value.getStartTime())) {
-                throw new IOException("Пересечение по времени выполнения c задачей - " + value.getName());
-            } else if (task.getEndTime().isBefore(value.getEndTime()) & task.getEndTime().
-                    isAfter(value.getStartTime())) {
-                throw new IOException("Пересечение по времени выполнения c задачей - " + value.getName());
-            } else if (task.getEndTime().isAfter(value.getEndTime()) & task.getStartTime().
-                    isBefore(value.getStartTime())) {
-                throw new IOException("Пересечение по времени выполнения c задачей - " + value.getName());
+        if (task.getStartTime() != null) {
+            for (Task value : sortTaskTime.values()) {
+                if (task.getStartTime().isBefore(value.getEndTime()) && task.getStartTime().isAfter(value.getStartTime())) {
+                    throw new IOException("Пересечение по времени выполнения c задачей - " + value.getName());
+                } else if (task.getEndTime().isBefore(value.getEndTime()) && task.getEndTime().
+                        isAfter(value.getStartTime())) {
+                    throw new IOException("Пересечение по времени выполнения c задачей - " + value.getName());
+                } else if (task.getEndTime().isAfter(value.getEndTime()) && task.getStartTime().
+                        isBefore(value.getStartTime())) {
+                    throw new IOException("Пересечение по времени выполнения c задачей - " + value.getName());
+                }
             }
         }
     }
 
     @Override
-    public ArrayList getSubtaskFromEpic(Integer id) {
+    public ArrayList<Subtask> getSubtaskFromEpic(Integer id) {
         ArrayList<Subtask> listSubtaskFromEpic = new ArrayList<>();
         Epic epic = epics.get(id);
         for (Integer idSubtask : epic.getSubtaskIds()) {
@@ -79,17 +76,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList getTasks() {
+    public ArrayList<Task> getTasks() {
         return new ArrayList<>(this.tasks.values());
     }
 
     @Override
-    public ArrayList getEpics() {
+    public List<Task> getEpics() {
         return new ArrayList<>(this.epics.values());
     }
 
     @Override
-    public ArrayList getSubtasks() {
+    public List<Task> getSubtasks() {
         return new ArrayList<>(this.subtasks.values());
     }
 
@@ -149,9 +146,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Integer id, Task task) throws IOException {
-        if(!tasks.containsKey(task.getTaskId()) || id != task.getTaskId()) {
-            return;
-        } else {
+        if(tasks.containsKey(task.getTaskId()) || id == task.getTaskId()) {
             sortTaskTime.remove(tasks.get(id).getStartTime());
             intersectionsOfTime(task);
             tasks.put(id, task);
@@ -161,9 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Integer id, Subtask subtask) throws IOException {
-        if (!epics.containsKey(subtask.getEpicId())) {
-            return;
-        } else {
+        if (epics.containsKey(subtask.getEpicId())) {
             sortTaskTime.remove(subtasks.get(id).getStartTime());
             intersectionsOfTime(subtask);
             subtasks.put(id, subtask);
@@ -176,9 +169,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Integer id, Epic epic) {
-        if (!epics.containsKey(epic.getTaskId()) || id != epic.getTaskId()) {
-            return;
-        } else {
+        if (epics.containsKey(epic.getTaskId()) || id == epic.getTaskId()) {
             ArrayList<Integer> subtaskIds = epics.get(id).getSubtaskIds();
             epic.setSubtaskIds(subtaskIds);
             epics.put(id, epic);
@@ -245,7 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void calculatingTheEpicExecutionTime(Integer idEpic) {
-        if (!epics.get(idEpic).getSubtaskIds().isEmpty()) {
+        if (!epics.get(idEpic).getSubtaskIds().isEmpty() && subtasks.get(epics.get(idEpic).getSubtaskIds().get(0)).getStartTime() != null) {
             LocalDateTime startEpicTime = subtasks.get(epics.get(idEpic).getSubtaskIds().get(0)).getStartTime();
             LocalDateTime endEpicTime = subtasks.get(epics.get(idEpic).getSubtaskIds().get(0)).getEndTime();
             long durationEpic = 0;
@@ -262,9 +253,5 @@ public class InMemoryTaskManager implements TaskManager {
             epics.get(idEpic).setStartTime(startEpicTime);
             epics.get(idEpic).setEndTime(startEpicTime.plusMinutes(durationEpic));
         }
-    }
-
-    protected HistoryManager getHistoryManager() {
-        return historyManager;
     }
 }

@@ -6,7 +6,7 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> head;
     private Node<Task> tail;
-    private Map<Integer, Node> viewedTask = new HashMap<>();
+    private final Map<Integer, Node<Task>> viewedTask = new HashMap<>();
 
     @Override
     public void add(Task task) {
@@ -33,7 +33,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void linkLast(Task task) {
-        Node node = new Node<>(task, tail, null);
+        Node<Task> node = new Node<>(task, tail, null);
         if (head == null) {
             head = node;
         } else if(viewedTask.containsKey(task.getTaskId())) {
@@ -48,16 +48,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private ArrayList<Task> getTasks() {
-        List<Task> getHistoryList = new ArrayList<>();
-        Node headNode = head;
+        ArrayList<Task> getHistoryList = new ArrayList<>();
+        Node<Task> headNode = head;
         while(headNode != null) {
-            getHistoryList.add((Task) headNode.data);
+            getHistoryList.add(headNode.data);
             headNode = headNode.next;
         }
-        return (ArrayList<Task>) getHistoryList;
+        return getHistoryList;
     }
 
-    private void removeNode(Node node) {
+    private void removeNode(Node<Task> node) {
         if (node == head) {
             head = node.next;
         } else if(node == tail) {
@@ -77,7 +77,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return tail;
     }
 
-    public Map<Integer, Node> getViewedTask() {
+    public Map<Integer, Node<Task>> getViewedTask() {
         return viewedTask;
     }
 }

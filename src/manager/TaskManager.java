@@ -9,41 +9,41 @@ import java.util.List;
 
 public interface TaskManager {
 
-    public List<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks();
 
-    public ArrayList getSubtaskFromEpic(Integer id);
+    ArrayList<Subtask> getSubtaskFromEpic(Integer id);
 
-    public void addTask(Task task) throws IOException;
+    void addTask(Task task) throws IOException;
 
-    public void addEpic(Epic epic);
+    void addEpic(Epic epic);
 
-    public void addSubtask(Subtask subtask) throws IOException;
+    void addSubtask(Subtask subtask) throws IOException;
 
-    public ArrayList getTasks();
+    ArrayList<Task> getTasks();
 
-    public ArrayList getEpics();
+    List<Task> getEpics();
 
-    public ArrayList getSubtasks();
+    List<Task> getSubtasks();
 
-    public void deleteAllTheTasksInListTask();
+    void deleteAllTheTasksInListTask();
 
-    public void deleteAllTheTasksInListSubtask();
+    void deleteAllTheTasksInListSubtask();
 
-    public void deleteAllTheTasksInListEpic();
+    void deleteAllTheTasksInListEpic();
 
-    public Task getValueById(Integer id);
+    Task getValueById(Integer id);
 
-    public void updateTask(Integer id, Task task) throws IOException;
+    void updateTask(Integer id, Task task) throws IOException;
 
-    public void updateSubtask(Integer id, Subtask subtask) throws IOException;
+    void updateSubtask(Integer id, Subtask subtask) throws IOException;
 
-    public void updateEpic(Integer id, Epic epic);
+    void updateEpic(Integer id, Epic epic);
 
-    public void deleteValueTaskById(Integer id);
+    void deleteValueTaskById(Integer id);
 
-    public void deleteValueEpicById(Integer id);
+    void deleteValueEpicById(Integer id);
 
-    public void deleteValueSubtaskById(Integer id);
+    void deleteValueSubtaskById(Integer id);
 
-    public List<Task> getHistory();
+    List<Task> getHistory();
 }

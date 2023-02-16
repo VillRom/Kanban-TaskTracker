@@ -21,22 +21,22 @@ import java.time.LocalDateTime;
 public class HttpTaskServer implements HttpHandler {
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private Gson gson = new GsonBuilder()
+    private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
-    private TaskManager taskManager = Managers.getDefault();
+    private final TaskManager taskManager = Managers.getDefault();
 
     public void start() throws IOException {
         HttpServer httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
-        httpServer.createContext("/tasks", this::handle);
+        httpServer.createContext("/tasks", this);
         httpServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String response = null;
+        String response;
         String[] path = exchange.getRequestURI().getPath().split("/");
         InputStream inputStream = exchange.getRequestBody();
         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);

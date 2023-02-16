@@ -5,7 +5,6 @@ import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     }
 
     @BeforeEach
-    private void setUp() throws IOException {
+    public void setUp() throws IOException {
         taskManager = new InMemoryTaskManager();
         initTasks();
     }
@@ -142,12 +141,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void intersectionsOfTimeTest() {
-        final IOException exception = Assertions.assertThrows(IOException.class, new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                task.setStartTime(task.getStartTime().plusMinutes(120));
-                taskManager.addTask(task);
-            }
+        final IOException exception = Assertions.assertThrows(IOException.class, () -> {
+            task.setStartTime(task.getStartTime().plusMinutes(120));
+            taskManager.addTask(task);
         });
         Assertions.assertEquals("Пересечение по времени выполнения c задачей - Проверка Subtask",
                 exception.getMessage(), "сообщение об исключении не совпало");
@@ -157,15 +153,15 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     public void calculatingTheEpicExecutionTime() {
         Epic epictest = new Epic("Проверка Epic", TypeTask.EPIC, "Epic для проверки", StatusTasks.NEW, 2,
                 5);
-        final long durationTest = ((Subtask)taskManager.getSubtasks().get(0)).getDuration();
-        LocalDateTime dateTime = ((Subtask)taskManager.getSubtasks().get(0)).getStartTime().plusMinutes(durationTest);
-        Assertions.assertNotEquals(epictest.getStartTime(), ((Epic)taskManager.getEpics().get(0)).getStartTime(),
+        final long durationTest = taskManager.getSubtasks().get(0).getDuration();
+        LocalDateTime dateTime = taskManager.getSubtasks().get(0).getStartTime().plusMinutes(durationTest);
+        Assertions.assertNotEquals(epictest.getStartTime(), taskManager.getEpics().get(0).getStartTime(),
                 "время начала не изменилось");
-        Assertions.assertEquals(((Epic)taskManager.getEpics().get(0)).getStartTime(), ((Subtask)taskManager
-                .getSubtasks().get(0)).getStartTime(), "время начала не совпадает с сабтаском");
-        Assertions.assertEquals(durationTest, ((Epic)taskManager.getEpics().get(0)).getDuration(),
+        Assertions.assertEquals(taskManager.getEpics().get(0).getStartTime(), taskManager
+                .getSubtasks().get(0).getStartTime(), "время начала не совпадает с сабтаском");
+        Assertions.assertEquals(durationTest, taskManager.getEpics().get(0).getDuration(),
                 "время выполнения не совпадает с сабтаском");
-        Assertions.assertEquals(dateTime, ((Epic)taskManager.getEpics().get(0)).getEndTime(),
+        Assertions.assertEquals(dateTime, taskManager.getEpics().get(0).getEndTime(),
                 "время окончания не совпадает с сабтаском");
     }
 }

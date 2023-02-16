@@ -13,7 +13,7 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
     private File file;
 
     @BeforeEach
-    private void setUp() throws IOException {
+    public void setUp() throws IOException {
         file = new File("autosave.csv");
         taskManager = new FileBackedTasksManager(file);
         initTasks();
@@ -162,8 +162,6 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
             while (br.ready()){
                 taskSave.add(br.readLine());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -172,8 +170,7 @@ public class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     public void loadFromFileTestWithEmptyHistory() {
-        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile
-                (file);
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
         Assertions.assertEquals(1, fileBackedTasksManager.getTasks().size(),
                 "в списке тасков не 1 задача");
         Assertions.assertEquals(1, fileBackedTasksManager.getSubtasks().size(),

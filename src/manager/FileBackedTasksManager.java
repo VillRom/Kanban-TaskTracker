@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private static File autoSave;
+    private File autoSave;
 
     public FileBackedTasksManager(File autoSave) {
         this.autoSave = autoSave;
@@ -173,8 +173,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static List<Integer> fromString(String value) {
         List<Integer> listIdTasks = new ArrayList<>();
         String[] arrayIdTasks = value.split(",");
-        for (int i = 0; i < arrayIdTasks.length; i++) {
-            listIdTasks.add(Integer.valueOf(arrayIdTasks[i]));
+        for (String arrayIdTask : arrayIdTasks) {
+            listIdTasks.add(Integer.valueOf(arrayIdTask));
         }
         return listIdTasks;
     }
